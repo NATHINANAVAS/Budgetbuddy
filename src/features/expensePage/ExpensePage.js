@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
 
+
+
 const ExpensePage = () => {
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
@@ -19,6 +21,10 @@ const ExpensePage = () => {
 
     fetchCategories();
   }, []);
+
+
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -17,7 +17,7 @@ const TransactionPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/categories');
+        const response = await fetch('http://localhost:8080/api/categories');
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -65,6 +65,8 @@ const TransactionPage = () => {
             </MenuItem>
           ))}
         </TextField>
+        
+
       </Box>
       <Typography variant="h6">Amount: {transactions.find(t => t.month === month && t.category === category)?.amount || 0}</Typography>
     </Box>
