@@ -1,0 +1,24 @@
+/* HomePage.module.css */
+.container {
+  margin: 20px;
+}
+
+.title {
+  font-weight: bold;
+  color: #3f51b5;
+  margin-top: 20px;
+  font-size: 32px;
+}
+
+.caption {
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.card {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
