@@ -24,4 +24,7 @@
   .navLink:hover {
     text-decoration: underline;
   }
-  
+  .navLink.active {
+    background-color: #007bff;
+    color: white;
+  }

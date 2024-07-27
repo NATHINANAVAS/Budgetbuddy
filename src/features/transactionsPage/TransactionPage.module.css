@@ -1,0 +1,61 @@
+/* src/features/transactionPage/TransactionPage.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 20px;
+}
+
+.tableChartContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.tableContainer {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px; /* Adjust the height as needed */
+}
+
+.transactionTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.transactionTable th,
+.transactionTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.transactionTable th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.chartContainer {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.filterItem {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.filterItem:last-child {
+  margin-right: 0;
+}

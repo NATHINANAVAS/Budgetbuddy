@@ -1,5 +1,10 @@
+// src/features/transactionPage/TransactionPage.js
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Typography, MenuItem } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { TextField, Box, Typography, MenuItem, Button, Grid } from '@mui/material';
+import { fetchInitialData, fetchTransactions } from './TransactionPageSlice';
+import TransactionChart from './TransactionChart';
+import styles from './TransactionPage.module.css';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -7,68 +12,128 @@ const months = [
 ];
 
 const TransactionPage = () => {
-  const [month, setMonth] = useState('May');
-  const [category, setCategory] = useState('Grocery');
-  const [categories, setCategories] = useState([]);
-  const [transactions] = useState([
-    { month: 'May', category: 'Grocery', amount: 0 }
-  ]);
+  const dispatch = useDispatch();
+  const { categories, users, transactions, filteredTransactions, loading, error } = useSelector((state) => state.transactionPage);
+  const [month, setMonth] = useState('');
+  const [category, setCategory] = useState('');
+  const [user, setUser] = useState('');
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/categories');
-        const data = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
+    dispatch(fetchInitialData());
+  }, [dispatch]);
 
-    fetchCategories();
-  }, []);
-
-  const handleMonthChange = (e) => setMonth(e.target.value);
-  const handleCategoryChange = (e) => setCategory(e.target.value);
+  const handleFilter = () => {
+    const filterParams = {};
+    if (user) filterParams.user = user;
+    if (category) filterParams.category = category;
+    if (month) filterParams.month = months.indexOf(month) + 1;
+    dispatch(fetchTransactions(filterParams));
+  };
 
   return (
-    <Box mt={5}>
+    <Box mt={5} className={styles.container}>
       <Typography variant="h4" mb={3}>Transactions</Typography>
-      <Box mb={3}>
-        <TextField
-          select
-          label="Select Month"
-          value={month}
-          onChange={handleMonthChange}
-          fullWidth
-          variant="outlined"
-          margin="normal"
-        >
-          {months.map((monthName, index) => (
-            <MenuItem key={index} value={monthName}>
-              {monthName}
+      <Grid container spacing={1} alignItems="center" className={styles.filters}>
+        <Grid item xs={12} md={2} className={styles.filterItem}>
+          <TextField
+            select
+            label="Month"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            fullWidth
+            variant="outlined"
+            size="small"
+            margin="normal"
+          >
+            <MenuItem value="">
+              <em>All Months</em>
             </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          select
-          label="Category"
-          value={category}
-          onChange={handleCategoryChange}
-          fullWidth
-          variant="outlined"
-          margin="normal"
-        >
-          {categories.map((cat, index) => (
-            <MenuItem key={index} value={cat.name}>
-              {cat.name}
+            {months.map((monthName, index) => (
+              <MenuItem key={index} value={monthName}>
+                {monthName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={2} className={styles.filterItem}>
+          <TextField
+            select
+            label="Category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            fullWidth
+            variant="outlined"
+            size="small"
+            margin="normal"
+          >
+            <MenuItem value="">
+              <em>All Categories</em>
             </MenuItem>
-          ))}
-        </TextField>
-        
-
+            {categories.map((cat, index) => (
+              <MenuItem key={index} value={cat.id}>
+                {cat.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={2} className={styles.filterItem}>
+          <TextField
+            select
+            label="User"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+            fullWidth
+            variant="outlined"
+            size="small"
+            margin="normal"
+          >
+            <MenuItem value="">
+              <em>All Users</em>
+            </MenuItem>
+            {users.map((userItem, index) => (
+              <MenuItem key={index} value={userItem.id}>
+                {userItem.first_name} {userItem.last_name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={2} className={styles.filterItem}>
+          <Button variant="contained" color="primary" onClick={handleFilter} fullWidth>
+            Filter
+          </Button>
+        </Grid>
+      </Grid>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error}</p>}
+      <Box className={styles.tableChartContainer}>
+        <Box className={styles.tableContainer}>
+          <table className={styles.transactionTable}>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>User</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTransactions.map((transaction, index) => (
+                <tr key={index}>
+                  <td>{transaction.title}</td>
+                  <td>{transaction.amount}</td>
+                  <td>{new Date(transaction.expense_date).toLocaleDateString()}</td>
+                  <td>{transaction.category}</td>
+                  <td>{transaction.first_name} {transaction.last_name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Box>
+        <Box className={styles.chartContainer}>
+          <TransactionChart transactions={filteredTransactions} />
+        </Box>
       </Box>
-      <Typography variant="h6">Amount: {transactions.find(t => t.month === month && t.category === category)?.amount || 0}</Typography>
     </Box>
   );
 };
